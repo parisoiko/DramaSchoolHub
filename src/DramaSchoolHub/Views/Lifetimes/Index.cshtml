@@ -1,14 +1,16 @@
 @model List<LifetimeRow>
 @{
-    ViewData["Title"] = "Service lifetimes";
+    ViewData["Title"] = "DI lifetimes";
 }
 
-<h1>Service lifetimes</h1>
-<p>
-    The controller asked the DI container for each kind of stage pass <strong>twice</strong>.
-    Every pass gets a random code when it is created, so the same code means the same object.
-    Refresh the page and watch which codes change.
-</p>
+<section class="hero">
+    <h1>Service lifetimes</h1>
+    <p>
+        The controller asks the DI container for each kind of stage pass <strong>twice</strong>.
+        Every pass gets a random code when it's created, so the same code means the same object.
+        Refresh the page and watch which codes change.
+    </p>
+</section>
 
 <table>
     <thead>
@@ -27,3 +29,14 @@
         }
     </tbody>
 </table>
+
+<p class="note">
+    <strong>The usher</strong>, a separate scoped service, says: <em>“@ViewData["UsherGreeting"]”</em>
+    It's the same code as the Scoped row: within one request, every service shares the scoped pass.
+</p>
+
+<dl class="legend">
+    <dt>Transient</dt><dd>a new object every time one is asked for</dd>
+    <dt>Scoped</dt><dd>one object per request</dd>
+    <dt>Singleton</dt><dd>one object for the whole app, shared by every request</dd>
+</dl>

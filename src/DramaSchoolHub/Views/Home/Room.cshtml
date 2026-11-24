@@ -3,14 +3,16 @@
     ViewData["Title"] = Model.Room.Name;
 }
 
-<h1>@Model.Room.Name</h1>
+<p><a class="back-link" asp-controller="Home" asp-action="Index">← All rooms</a></p>
 
-<table>
-    <tbody>
-        <tr><th>Capacity</th><td>@Model.Room.Capacity people</td></tr>
-        <tr><th>Piano</th><td>@(Model.Room.HasPiano ? "Yes" : "No")</td></tr>
-        <tr><th>Longest booking</th><td>@Model.MaxBookingHours hours</td></tr>
-    </tbody>
-</table>
-
-<p><a href="/">← All rooms</a></p>
+<article class="panel">
+    <h1>@Model.Room.Name</h1>
+    <dl class="facts">
+        <dt>Capacity</dt>
+        <dd>@Model.Room.Capacity people</dd>
+        <dt>Piano</dt>
+        <dd>@(Model.Room.HasPiano ? "Yes" : "No")</dd>
+        <dt>Longest booking</dt>
+        <dd>@Model.MaxBookingHours hours</dd>
+    </dl>
+</article>

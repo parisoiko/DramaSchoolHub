@@ -5,23 +5,35 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - DramaSchoolHub</title>
-    <link rel="stylesheet" href="~/css/site.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Source+Sans+3:wght@400;600&display=swap" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <a class="brand" asp-controller="Home" asp-action="Index">🎭 DramaSchoolHub</a>
-        <nav>
-            <a asp-controller="Home" asp-action="Index">Rooms</a>
-            @* Plain hrefs: asp-controller leaves href empty until the controller exists. *@
-            <a href="/Lifetimes">Lifetimes</a>
-            <a href="/Rules">Booking rules</a>
-        </nav>
+    <header class="site-header">
+        <div class="container header-inner">
+            <a class="brand" asp-controller="Home" asp-action="Index">
+                <span class="brand-mark" aria-hidden="true">🎭</span> DramaSchoolHub
+            </a>
+            <nav>
+                <a asp-controller="Home" asp-action="Index">Rooms</a>
+                <a asp-controller="Bookings" asp-action="Index">Bookings</a>
+                <a asp-controller="Rules" asp-action="Index">Booking rules</a>
+                <a asp-controller="Lifetimes" asp-action="Index">DI lifetimes</a>
+            </nav>
+        </div>
     </header>
-    <main>
+
+    <main class="container">
         @RenderBody()
     </main>
-    @* MODULE 3, step 4: a footer with the opening hours, read from the booking rules. *@
-    <footer>Rooms open @Rules.Value.OpeningHour.ToString("00"):00 to @Rules.Value.ClosingHour.ToString("00"):00.</footer>
 
+    @* The layout has no model, so the opening hours come straight from the container. *@
+    <footer class="site-footer">
+        <div class="container">
+            Rooms open @Rules.Value.OpeningHour.ToString("00"):00 to @Rules.Value.ClosingHour.ToString("00"):00.
+        </div>
+    </footer>
 </body>
 </html>

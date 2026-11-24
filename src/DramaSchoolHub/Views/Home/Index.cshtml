@@ -3,21 +3,18 @@
     ViewData["Title"] = "Rehearsal rooms";
 }
 
-<h1>Rehearsal rooms</h1>
-<p>Book a room for your scene work, monologues or full rehearsals.</p>
+<section class="hero">
+    <h1>Rehearsal rooms</h1>
+    <p>Book a room for scene work, monologues or a full run-through.</p>
+</section>
 
-<table>
-    <thead>
-        <tr><th>Room</th><th>Capacity</th><th>Piano</th></tr>
-    </thead>
-    <tbody>
-        @foreach (var room in Model)
-        {
-            <tr>
-                <td><a href="/Home/Room/@room.Id">@room.Name</a></td>
-                <td>@room.Capacity</td>
-                <td>@(room.HasPiano ? "Yes" : "No")</td>
-            </tr>
-        }
-    </tbody>
-</table>
+<div class="room-grid">
+    @foreach (var room in Model)
+    {
+        <a class="room-card" asp-controller="Home" asp-action="Room" asp-route-id="@room.Id">
+            <h2>@room.Name</h2>
+            <p class="room-meta">Up to @room.Capacity people</p>
+            <span class="tag @(room.HasPiano ? "tag-piano" : "tag-plain")">@(room.HasPiano ? "Piano" : "No piano")</span>
+        </a>
+    }
+</div>

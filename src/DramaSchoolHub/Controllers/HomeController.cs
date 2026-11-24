@@ -5,31 +5,25 @@ using Microsoft.Extensions.Options;
 
 namespace DramaSchoolHub.Controllers;
 
-public class HomeController : Controller
+public class HomeController(IRoomCatalogue catalogue, ILogger<HomeController> logger) : Controller
 {
-    private readonly IRoomCatalogue _catalogue;
-    private readonly ILogger<HomeController> _logger;
-
-    public HomeController(IRoomCatalogue catalogue, ILogger<HomeController> logger)
-    {
-        _catalogue = catalogue;
-        _logger = logger;
-    }
-
     public IActionResult Index()
     {
-        var rooms = _catalogue.GetAll();
-        _logger.LogInformation("Showing {RoomCount} rehearsal rooms", rooms.Count);
+        var rooms = catalogue.GetAll();
+        logger.LogInformation("Showing {RoomCount} rehearsal rooms", rooms.Count);
         return View(rooms);
     }
 
+    // Only this action needs the rules, so they're injected here rather than in the constructor.
+    [HttpGet("/rooms/{id:int}")]
     public IActionResult Room(int id, [FromServices] IOptions<BookingRules> rules)
     {
-        var room = _catalogue.GetById(id);
+        var room = catalogue.GetById(id);
         if (room == null)
         {
             return NotFound();
         }
+
         return View(new RoomDetails(room, rules.Value.MaxBookingHours));
     }
 

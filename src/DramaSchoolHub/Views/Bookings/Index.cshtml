@@ -1,0 +1,34 @@
+@using System.Globalization
+@model List<BookingRow>
+@{
+    ViewData["Title"] = "Bookings";
+    var culture = CultureInfo.GetCultureInfo("en-GB");
+}
+
+<section class="hero">
+    <h1>Upcoming bookings</h1>
+    <p>Bookings that have ended are removed automatically by a background service.</p>
+</section>
+
+@if (Model.Count == 0)
+{
+    <p class="panel">No upcoming bookings.</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr><th>When</th><th>Room</th><th>Booked by</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in Model)
+            {
+                <tr>
+                    <td>@booking.Start.ToString("ddd d MMM, HH:mm", culture)–@booking.End.ToString("HH:mm", culture)</td>
+                    <td>@booking.RoomName</td>
+                    <td>@booking.BookedBy</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

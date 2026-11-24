@@ -3,8 +3,18 @@
     ViewData["Title"] = "Booking rules";
 }
 
-<h1>Booking rules</h1>
-<ul>
-    <li>Rooms open at @Model.OpeningHour.ToString("00"):00 and close at @Model.ClosingHour.ToString("00"):00.</li>
-    <li>A single booking can last up to @Model.MaxBookingHours hours.</li>
-</ul>
+<section class="hero">
+    <h1>Booking rules</h1>
+    <p>Read from <code>appsettings.json</code>. Edits show up here on the next refresh, without a restart.</p>
+</section>
+
+<article class="panel">
+    <dl class="facts">
+        <dt>Opening hours</dt>
+        <dd>@Model.OpeningHour.ToString("00"):00 to @Model.ClosingHour.ToString("00"):00</dd>
+        <dt>Longest booking</dt>
+        <dd>A single booking can last up to @Model.MaxBookingHours hours.</dd>
+        <dt>Box office</dt>
+        <dd>@(Model.BoxOfficeClosed ? "Closed" : "Open")</dd>
+    </dl>
+</article>

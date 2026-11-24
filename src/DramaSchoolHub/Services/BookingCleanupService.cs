@@ -1,5 +1,6 @@
 namespace DramaSchoolHub.Services;
 
+// Removes ended bookings at start-up and then once a minute.
 public class BookingCleanupService(IServiceScopeFactory scopeFactory, ILogger<BookingCleanupService> logger)
     : BackgroundService
 {
@@ -8,7 +9,9 @@ public class BookingCleanupService(IServiceScopeFactory scopeFactory, ILogger<Bo
         using var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
         do
         {
-            using IServiceScope scope = scopeFactory.CreateAsyncScope();
+            // A hosted service is a singleton running outside any request, so it creates its own scope.
+            // The store is a singleton today, but this keeps working if it becomes a scoped DbContext.
+            using IServiceScope scope = scopeFactory.CreateScope();
             var store = scope.ServiceProvider.GetRequiredService<IBookingStore>();
             int removed = store.RemoveEndedBefore(DateTime.Now);
             logger.LogInformation("Removed {Count} ended bookings", removed);

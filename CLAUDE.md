@@ -1,24 +1,30 @@
-# Training project: DramaSchoolHub (DI & middleware)
+# DramaSchoolHub
 
-Learning project for the Pluralsight course "Applying Dependency Injection & Middleware in ASP.NET Core 10"
-(Steve Gordon; demo app "Tennis Booking"). The user watches a module, then applies it here; Claude is the tutor.
-Sibling projects in the same style: `c:\Projects\Training\AspNetCore`, `EfCore`, `Linq`, `eShopEnhanced`.
+ASP.NET Core 10 MVC + minimal APIs. A rehearsal-room booking site for a drama school that showcases dependency injection
+and the middleware pipeline. Public portfolio project: keep the code clean and professional. No database: rooms and
+bookings live in memory on purpose.
 
-## How modules work
-- One app that evolves (not separate lesson files): `src/DramaSchoolHub` (MVC + later minimal APIs, port 5090).
-  Spots to change are marked `// MODULE N, step M`. Theory goes in `docs/module-NN-*.md`; README holds the curriculum.
-- Tests: `tests/DramaSchoolHub.Tests/ModuleNNTests.cs`, names `ModuleNN_StepM_...` (two digits). Tests find the user's
-  new types by name via reflection so they compile before the types exist; failure messages say what to add.
-- Before handing out a module: verify a reference solution in a scratchpad copy and check the stubs fail helpfully.
-  Never leave solutions in the user's files. Build modules one at a time, when the user asks.
-- Course → project names: tennis court → rehearsal room, court booking → room booking, `WeatherForecaster`-style
-  examples → drama-school equivalents. Course may use Visual Studio; the user uses VS Code and `dotnet` CLI.
+## Layout
+- `src/DramaSchoolHub/`: the web app (Controllers, Extensions, Filters, Middleware, Models, Notifications, Services, Views, wwwroot)
+- `tests/DramaSchoolHub.Tests/`: xUnit unit tests and `WebApplicationFactory<Program>` integration tests, grouped by feature
+- `docs/`: `NOTES.md` (concept explanations, kept out of the code) and README screenshots
+- `.github/workflows/ci.yml`: builds and tests on every push to `main`
 
-## How to teach (user preferences)
-- Explain the concept briefly, then ONE step at a time as fill-in-the-blank code (`____`) with the expected result.
-  The user says "ready" (or "ρεαδυ" on the Greek layout); then read the file, run that step's tests, give feedback.
-- Always show the sample data (e.g. the rooms table) next to a question that uses it.
-- "Solve it for me" = do it in their file, then explain each part.
-- If code looks stale, the user may not have saved (Auto Save is on in `.vscode/settings.json`).
-- Recurring slips: forgetting `async`, list name instead of the lambda parameter, missing `;` or `)`,
-  lowercase property names, copying course names into this project, messy indentation after pasting.
+## Commands (from the repo root)
+- Run: `dotnet run --project src/DramaSchoolHub` (http://localhost:5090), or F5 in VS Code
+- Test: `dotnet test` (37 tests)
+- If the developer's debugger (F5) is running, `bin/` is locked: build or test with a separate output folder (`dotnet test -o <tmp>`).
+
+## Conventions
+- Registrations live in `Extensions/ServiceCollectionExtensions.cs` (one method per area); `Program.cs` stays a short table of contents.
+- New code uses primary constructors for injection, like the existing controllers and services.
+- Comments explain *why*, not basic concepts (those belong in `docs/NOTES.md`).
+- Integration tests override settings with `factory.WithSettings(...)` and capture logs with `factory.WithLogs(...)` (`TestSupport.cs`).
+- Package versions: Microsoft.AspNetCore.* 10.0.13 (the installed ASP.NET Core runtime).
+
+## Gotchas
+- Pipeline order in `Program.cs` is part of the design: timer first, box office after `UseStaticFiles`, `/ping` before the box office.
+- Middleware classes are effectively singletons: scoped services go into `InvokeAsync` parameters, never the constructor.
+- `BookingStore` is a shared singleton: every member must take `_lock`, reads included.
+- `MaxBookingHours` is limited to 1–5 by `[Range]`, and options are validated at start-up, so a bad `appsettings.json` value stops the app.
+- `HomeController.Room` is attribute-routed (`/rooms/{id}`), so `/Home/Room/2` no longer exists.

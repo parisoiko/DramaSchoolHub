@@ -2,18 +2,17 @@ using DramaSchoolHub.Models;
 
 namespace DramaSchoolHub.Services;
 
-// Keeps the bookings in memory. Registered as a SINGLETON (step 2), so every user's
-// request uses this one object, often at the same moment.
-// MODULE 4, step 2: this works for one user at a time, but it isn't thread-safe yet.
+// In-memory bookings. Registered as a singleton, so many requests use it at the same moment:
+// every method takes the same lock, reads included (ToList while another thread adds would throw).
 public class BookingStore : IBookingStore
 {
     private readonly List<Booking> _bookings = [];
-    private int _nextId = 1;
     private readonly Lock _lock = new();
+    private int _nextId = 1;
 
     public BookingStore()
     {
-        // Sample bookings: one that has already ended (yesterday) and two coming up.
+        // Sample data: one booking that has already ended (the cleanup service removes it) and two to come.
         DateTime today = DateTime.Today;
         Add(new Booking { RoomId = 2, BookedBy = "Year 1: Chekhov scene study", Start = today.AddDays(-1).AddHours(10), Hours = 2 });
         Add(new Booking { RoomId = 1, BookedBy = "Year 3: Hamlet run-through", Start = today.AddDays(1).AddHours(14), Hours = 4 });
@@ -30,7 +29,7 @@ public class BookingStore : IBookingStore
         }
     }
 
-    // A copy, so the caller can loop over it while other requests add bookings.
+    // Returns a copy, so callers can loop over it outside the lock.
     public List<Booking> GetAll()
     {
         lock (_lock)

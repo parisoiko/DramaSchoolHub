@@ -2,9 +2,8 @@ using DramaSchoolHub.Models;
 
 namespace DramaSchoolHub.Services;
 
-// The school's rehearsal rooms. In-memory for now: the course is about
-// DI and middleware, not databases.
-public class RoomCatalogue: IRoomCatalogue
+// The school's rehearsal rooms, kept in memory: the project is about DI and middleware, not data access.
+public class RoomCatalogue : IRoomCatalogue
 {
     private readonly List<RehearsalRoom> _rooms =
     [
@@ -15,5 +14,6 @@ public class RoomCatalogue: IRoomCatalogue
     ];
 
     public List<RehearsalRoom> GetAll() => _rooms;
+
     public RehearsalRoom? GetById(int id) => _rooms.FirstOrDefault(room => room.Id == id);
 }
