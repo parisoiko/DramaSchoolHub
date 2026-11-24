@@ -4,43 +4,55 @@
 
 using DramaSchoolHub.Models;
 using DramaSchoolHub.Services;
+using DramaSchoolHub.Middleware;
 using Microsoft.AspNetCore.Mvc;
+using DramaSchoolHub.Filters;
+using DramaSchoolHub.Notifications;
+using DramaSchoolHub.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ---- Services: everything the app can ask the DI container for ----
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews(options => options.Filters.Add<AuditFilter>());
 
-// MODULE 1, step 3: register your own service here.
-builder.Services.AddSingleton<IRoomCatalogue, RoomCatalogue>();
-// MODULE 2, step 2: register the three stage passes, one per lifetime.
-builder.Services.AddTransient<TransientPass>();
-builder.Services.AddScoped<ScopedPass>();
-builder.Services.AddSingleton<SingletonPass>();
-// MODULE 2, step 5: bind the "BookingRules" section of appsettings.json.
+// MODULE 6, step 2: the school's own services, registered in Extensions/ServiceCollectionExtensions.cs.
+builder.Services.AddDramaSchoolServices();
+
+// Booking rules stay here: they need builder.Configuration.
 builder.Services.AddOptions<BookingRules>()
     .Bind(builder.Configuration.GetSection("BookingRules"))
     .ValidateDataAnnotations()
     .Validate(rules => rules.OpeningHour < rules.ClosingHour, "OpeningHour must be before ClosingHour.")
     .ValidateOnStart();
-// MODULE 4, step 3: replace the Configure line above with a validated version.
 
-// MODULE 4, step 1: register the Usher (try Singleton first, on purpose).
-builder.Services.AddScoped<Usher>();
-// MODULE 4, step 2: register the booking store.
-builder.Services.AddSingleton<IBookingStore, BookingStore>();
-// MODULE 4, step 5: register the background service.
-builder.Services.AddHostedService<BookingCleanupService>();
+// MODULE 6, step 1: register BOTH notification senders.
+builder.Services.AddSingleton<INotificationSender, EmailSender>();
+builder.Services.AddSingleton<INotificationSender, SmsSender>();
+// MODULE 6, step 3: register the SMS sender again, under the key "urgent".
+builder.Services.AddKeyedSingleton<INotificationSender, SmsSender>("urgent");
 
 var app = builder.Build();
 
-// ---- Middleware pipeline: what every request passes through ----
+// ---- Middleware pipeline: what every request passes through, IN THIS ORDER ----
+// MODULE 5, step 2: the request timer (first, so it times everything below it).
+app.UseMiddleware<RequestTimingMiddleware>();
+// MODULE 5, step 1: an inline middleware that adds a header.
+app.Use(async (context, next) =>
+{
+    context.Response.Headers["X-Theatre"] = "DramaSchoolHub";
+    await next(context);
+});
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
 }
 
 app.UseStaticFiles();
+
+// MODULE 5, step 4: a /ping branch (before the box office, so it always answers).
+app.Map("/ping", branch => branch.Run(context => context.Response.WriteAsync("pong")));
+// MODULE 5, step 3: the box office (after static files, so the CSS still loads).
+app.UseMiddleware<BoxOfficeMiddleware>();
 app.UseRouting();
 
 app.MapControllerRoute(
@@ -59,6 +71,14 @@ app.MapGet("/api/rooms/{id}", (int id, IRoomCatalogue catalogue) =>
 // [FromServices] because IBookingStore isn't registered until step 2; without it,
 // the app couldn't even start before then.
 app.MapGet("/api/bookings", ([FromServices] IBookingStore store) => store.GetAll());
+
+// Provided for Module 6: asks for EVERY registered sender and sends through each.
+app.MapGet("/api/notify", (IEnumerable<INotificationSender> senders) =>
+    senders.Select(sender => sender.Send("Studio B is double-booked")));
+
+// MODULE 6, step 3: /api/notify/urgent, using only the "urgent" sender.
+app.MapGet("/api/notify/urgent", ([FromKeyedServices("urgent")] INotificationSender sender) =>
+    new[] { sender.Send("Studio B is double-booked") });
 
 app.Run();
 

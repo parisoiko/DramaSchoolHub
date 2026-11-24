@@ -10,4 +10,5 @@ public class BookingRules
     public int ClosingHour { get; set; }
     [Range(1, 5)]
     public int MaxBookingHours { get; set; }
+    public bool BoxOfficeClosed { get; set; }
 }
