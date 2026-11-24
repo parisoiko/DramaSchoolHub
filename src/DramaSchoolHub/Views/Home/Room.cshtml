@@ -1,0 +1,16 @@
+@model RoomDetails
+@{
+    ViewData["Title"] = Model.Room.Name;
+}
+
+<h1>@Model.Room.Name</h1>
+
+<table>
+    <tbody>
+        <tr><th>Capacity</th><td>@Model.Room.Capacity people</td></tr>
+        <tr><th>Piano</th><td>@(Model.Room.HasPiano ? "Yes" : "No")</td></tr>
+        <tr><th>Longest booking</th><td>@Model.MaxBookingHours hours</td></tr>
+    </tbody>
+</table>
+
+<p><a href="/">← All rooms</a></p>

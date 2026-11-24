@@ -1,0 +1,29 @@
+@model List<LifetimeRow>
+@{
+    ViewData["Title"] = "Service lifetimes";
+}
+
+<h1>Service lifetimes</h1>
+<p>
+    The controller asked the DI container for each kind of stage pass <strong>twice</strong>.
+    Every pass gets a random code when it is created, so the same code means the same object.
+    Refresh the page and watch which codes change.
+</p>
+
+<table>
+    <thead>
+        <tr><th>Lifetime</th><th>First pass</th><th>Second pass</th><th>Same object?</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var row in Model)
+        {
+            bool same = row.First == row.Second;
+            <tr data-lifetime="@row.Lifetime" data-first="@row.First" data-second="@row.Second">
+                <td>@row.Lifetime</td>
+                <td><code>@row.First</code></td>
+                <td><code>@row.Second</code></td>
+                <td><span class="badge @(same ? "same" : "different")">@(same ? "same" : "different")</span></td>
+            </tr>
+        }
+    </tbody>
+</table>

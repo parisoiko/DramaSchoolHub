@@ -1,0 +1,23 @@
+@model List<RehearsalRoom>
+@{
+    ViewData["Title"] = "Rehearsal rooms";
+}
+
+<h1>Rehearsal rooms</h1>
+<p>Book a room for your scene work, monologues or full rehearsals.</p>
+
+<table>
+    <thead>
+        <tr><th>Room</th><th>Capacity</th><th>Piano</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var room in Model)
+        {
+            <tr>
+                <td><a href="/Home/Room/@room.Id">@room.Name</a></td>
+                <td>@room.Capacity</td>
+                <td>@(room.HasPiano ? "Yes" : "No")</td>
+            </tr>
+        }
+    </tbody>
+</table>

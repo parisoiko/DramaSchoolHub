@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/DramaSchoolHub/DramaSchoolHub.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/DramaSchoolHub.Tests/DramaSchoolHub.Tests.csproj" />
+  </Folder>
+</Solution>

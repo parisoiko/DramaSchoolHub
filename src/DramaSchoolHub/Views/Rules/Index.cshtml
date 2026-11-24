@@ -1,0 +1,10 @@
+@model BookingRules
+@{
+    ViewData["Title"] = "Booking rules";
+}
+
+<h1>Booking rules</h1>
+<ul>
+    <li>Rooms open at @Model.OpeningHour.ToString("00"):00 and close at @Model.ClosingHour.ToString("00"):00.</li>
+    <li>A single booking can last up to @Model.MaxBookingHours hours.</li>
+</ul>

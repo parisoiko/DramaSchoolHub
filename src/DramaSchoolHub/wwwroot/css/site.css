@@ -1,0 +1,18 @@
+body { margin: 0; font-family: system-ui, sans-serif; background: #faf7f2; color: #2b2118; }
+header { background: #6b1d2a; padding: 0.75rem 1.5rem; }
+.brand { color: #fff; font-size: 1.25rem; font-weight: 600; text-decoration: none; }
+main { max-width: 60rem; margin: 0 auto; padding: 1.5rem; }
+h1 { color: #6b1d2a; }
+table { border-collapse: collapse; width: 100%; background: #fff; }
+th, td { padding: 0.5rem 0.75rem; border-bottom: 1px solid #e5ddd2; text-align: left; }
+th { background: #f1e9dd; }
+header { display: flex; align-items: center; gap: 2rem; }
+nav { display: flex; gap: 1.25rem; }
+nav a { color: #f1e9dd; text-decoration: none; }
+nav a:hover { color: #fff; text-decoration: underline; }
+code { font-size: 1rem; }
+.badge { padding: 0.1rem 0.5rem; border-radius: 0.75rem; font-size: 0.85rem; color: #fff; }
+.badge.same { background: #2f7d4f; }
+.badge.different { background: #b4552d; }
+footer { max-width: 60rem; margin: 0 auto; padding: 1rem 1.5rem; color: #6d5f52; border-top: 1px solid #e5ddd2; }
+main a { color: #6b1d2a; }

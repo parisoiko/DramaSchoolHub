@@ -1,0 +1,27 @@
+@inject Microsoft.Extensions.Options.IOptions<BookingRules> Rules
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - DramaSchoolHub</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+    <header>
+        <a class="brand" asp-controller="Home" asp-action="Index">🎭 DramaSchoolHub</a>
+        <nav>
+            <a asp-controller="Home" asp-action="Index">Rooms</a>
+            @* Plain hrefs: asp-controller leaves href empty until the controller exists. *@
+            <a href="/Lifetimes">Lifetimes</a>
+            <a href="/Rules">Booking rules</a>
+        </nav>
+    </header>
+    <main>
+        @RenderBody()
+    </main>
+    @* MODULE 3, step 4: a footer with the opening hours, read from the booking rules. *@
+    <footer>Rooms open @Rules.Value.OpeningHour.ToString("00"):00 to @Rules.Value.ClosingHour.ToString("00"):00.</footer>
+
+</body>
+</html>
